@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-4">
     <h1 class="font-bold text-2xl">Add new Comment</h1>
     <p></p>
-    <form class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-4">
+    <form class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-4"  @submit="(e: Event) => {e.preventDefault(); addComment()}">
       <label for="name">Name:</label>
       <input id="name" v-model="name" type="text" name="name" placeholder="Name" />
 
@@ -18,7 +18,7 @@
       <label for="constraint">Constraint:</label>
       <textarea id="constraint" v-model="constraint" name="constraint" placeholder="Constraint"></textarea>
 
-      <ButtonComponent :disabled="name == ''" @click="(e: Event) => {e.preventDefault(); addComment()}">
+      <ButtonComponent :disabled="name == ''">
         Add New Comment
       </ButtonComponent>
     </form>   
@@ -39,6 +39,9 @@ const references = ref<Link[]>([])
 const constraint = ref('')
 
 function addComment() {
+  if (name.value == '') {
+    return
+  }
   store().comments.push({
     id: store().comments.map(c => c.id).reduce((a, b) => Math.max(a, b), 0) + 1,  
     name: name.value,
@@ -49,6 +52,7 @@ function addComment() {
   })
   
   name.value = ''
+  description.value = ''
   legalNorm.value = []
   references.value = []
   constraint.value = ''
