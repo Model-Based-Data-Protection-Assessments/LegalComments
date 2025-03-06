@@ -1,6 +1,7 @@
 export interface Comment {
   id: number
   name: string
+  description: string
   legalNorm: Link[]
   references: Link[]
   constraint: string
