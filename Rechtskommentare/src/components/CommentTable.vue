@@ -18,7 +18,7 @@
         :key="comment.id"
         :class="{ 'bg-black/10 dark:bg-black/30': index % 2 == 1 }"
         :to="{
-          name: 'comment',
+          name: 'Comment',
           params: { id: comment.id.toString() }
         }"
         class="table-row"

@@ -27,7 +27,39 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { computed } from 'vue';
 
-const comments = computed(() => {
-  return store().comments
+const searchParts = computed(() => {
+  return store().searchString.toLowerCase().split(' ')
 })
+
+const comments = computed(() => {
+  return store().comments.filter((comment) => {
+    if (searchMatches(comment.id.toString())) {
+      return true
+    }
+    if (searchMatches(comment.name.toLowerCase())) {
+      return true
+    }
+
+    for (const norm of comment.legalNorm) {
+      if (searchMatches(norm.text.toLowerCase())) {
+        return true
+      }
+      if (searchMatches(norm.to.toLowerCase())) {
+        return true
+      }
+    }
+    for (const reference of comment.references) {
+      if (searchMatches(reference.text.toLowerCase())) {
+        return true
+      }
+      if (searchMatches(reference.to.toLowerCase())) {
+        return true
+      }
+    }
+  })
+})
+
+function searchMatches(value: string) {
+  return searchParts.value.some((part) => value.includes(part))
+}
 </script>
