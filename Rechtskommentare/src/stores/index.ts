@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { type Comment } from '@/model'
 
 export const store = defineStore('store', {
   state: () =>
