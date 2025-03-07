@@ -3,7 +3,13 @@
     <div v-for="[idx, link] of value.entries()" :key="idx" class="flex gap-x-2">
       <input v-model="link.text" type="text" placeholder="Display Text" @input="change()" />
       <input v-model="link.to" type="text" placeholder="Link" class="w-96" @input="change()" />
-      <button v-if="link.text != '' || link.to != ''" @click="value.splice(idx, 1); change()">
+      <button
+        v-if="link.text != '' || link.to != ''"
+        @click="
+          value.splice(idx, 1)
+          change()
+        "
+      >
         <FontAwesomeIcon :icon="faTrash" />
       </button>
     </div>
@@ -11,18 +17,20 @@
 </template>
 
 <script setup lang="ts">
-import type { Link } from '@/model';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { ref, watch } from 'vue';
+import type { Link } from '@/model'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   modelValue: {
     type: Array<Link>,
-    default: () => [{
-      text: '',
-      to: ''
-    }]
+    default: () => [
+      {
+        text: '',
+        to: ''
+      }
+    ]
   }
 })
 
@@ -35,7 +43,10 @@ if (value.value.length == 0) {
     text: '',
     to: ''
   })
-} else if (value.value[value.value.length - 1].text != '' || value.value[value.value.length - 1].to != '') {
+} else if (
+  value.value[value.value.length - 1].text != '' ||
+  value.value[value.value.length - 1].to != ''
+) {
   value.value.push({
     text: '',
     to: ''
@@ -43,7 +54,7 @@ if (value.value.length == 0) {
 }
 
 function change() {
-  const last = value.value[value.value.length-1]
+  const last = value.value[value.value.length - 1]
   if (last.text != '' || last.to != '') {
     value.value.push({
       text: '',
@@ -51,30 +62,36 @@ function change() {
     })
   }
 
-  const copy = value.value.filter(l => l.text != '')
+  const copy = value.value.filter((l) => l.text != '')
   emit('update:modelValue', copy)
 }
 
-watch(() => props.modelValue, (val) => {
-  value.value = val
-  if (value.value.length == 0) {
-    value.value.push({
-      text: '',
-      to: ''
-    })
-  } else if (value.value[value.value.length - 1].text != '' || value.value[value.value.length - 1].to != '') {
-    value.value.push({
-      text: '',
-      to: ''
-    })
+watch(
+  () => props.modelValue,
+  (val) => {
+    value.value = val
+    if (value.value.length == 0) {
+      value.value.push({
+        text: '',
+        to: ''
+      })
+    } else if (
+      value.value[value.value.length - 1].text != '' ||
+      value.value[value.value.length - 1].to != ''
+    ) {
+      value.value.push({
+        text: '',
+        to: ''
+      })
+    }
   }
-})
+)
 </script>
 
 <style scoped>
 @reference "../main.css";
 
 input {
-  @apply rounded border border-black/50 dark:bg-gray-800 outline-none px-1;
+  @apply rounded border border-black/50 px-1 outline-none dark:bg-gray-800;
 }
 </style>

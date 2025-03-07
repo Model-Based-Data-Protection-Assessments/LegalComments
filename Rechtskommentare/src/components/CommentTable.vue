@@ -41,8 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CommentKeys, Comment } from '@/model';
-
+import type { CommentKeys, Comment } from '@/model'
 
 defineProps({
   comments: {
@@ -65,7 +64,7 @@ function getDisplayValue(comment: Comment, key: CommentKeys): string {
   } else if (key == 'name') {
     return comment.name
   } else if (key == 'legalNorm' || key == 'references') {
-    return comment[key].map(l => l.text).join(', ')
+    return comment[key].map((l) => l.text).join(', ')
   }
   return comment[key].toString()
 }

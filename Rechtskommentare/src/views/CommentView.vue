@@ -1,6 +1,6 @@
 <template>
-  <div class="grid grid-cols-[auto_1fr] gap-y-4 gap-x-2">
-    <h1 class="font-bold text-2xl col-span-2">
+  <div class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-4">
+    <h1 class="col-span-2 text-2xl font-bold">
       <span class="text-primary-500">#{{ comment.id }}</span> - {{ comment.name }}
     </h1>
 
@@ -8,12 +8,16 @@
 
     <div>Legal Norms:</div>
     <div class="flex flex-col">
-      <a v-for="[idx, link] of comment.legalNorm.entries()" :key="idx" :href="link.to">{{ link.text }}</a>
+      <a v-for="[idx, link] of comment.legalNorm.entries()" :key="idx" :href="link.to">{{
+        link.text
+      }}</a>
     </div>
 
     <div>References:</div>
     <div class="flex flex-col">
-      <a v-for="[idx, link] of comment.references.entries()" :key="idx" :href="link.to">{{ link.text }}</a>
+      <a v-for="[idx, link] of comment.references.entries()" :key="idx" :href="link.to">{{
+        link.text
+      }}</a>
     </div>
 
     <div>Constraint:</div>
@@ -22,9 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import { store } from '@/stores';
-import { computed } from 'vue';
-
+import { store } from '@/stores'
+import { computed } from 'vue'
 
 const props = defineProps({
   id: {
@@ -35,13 +38,13 @@ const props = defineProps({
 
 const id = computed(() => Number(props.id))
 
-const comment = computed(() => store().comments.find(comment => comment.id === id.value)!)
+const comment = computed(() => store().comments.find((comment) => comment.id === id.value)!)
 </script>
 
 <style scoped>
 @reference "../main.css";
 
 a {
-  @apply underline text-blue-700 dark:text-blue-400
+  @apply text-blue-700 underline dark:text-blue-400;
 }
 </style>
