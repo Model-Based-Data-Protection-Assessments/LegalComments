@@ -6,8 +6,10 @@
       <button
         v-if="link.text != '' || link.to != ''"
         @click="
-          value.splice(idx, 1)
-          change()
+          () => {
+            value.splice(idx, 1)
+            change()
+          }
         "
       >
         <FontAwesomeIcon :icon="faTrash" />

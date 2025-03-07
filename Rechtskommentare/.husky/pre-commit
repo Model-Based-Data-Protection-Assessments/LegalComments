@@ -1,1 +1,2 @@
-npm lint-staged
+cd Rechtskommentare
+npx lint-staged

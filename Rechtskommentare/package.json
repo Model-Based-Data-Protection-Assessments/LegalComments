@@ -11,7 +11,7 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint --max-warnings 0",
     "format": "prettier --write src/",
-    "prepare": "husky"
+    "prepare": "cd .. && husky Rechtskommentare/.husky"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -42,5 +42,11 @@
     "vite": "^6.1.0",
     "vite-plugin-vue-devtools": "^7.7.2",
     "vue-tsc": "^2.2.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue,html}": [
+      "npm run lint",
+      "npm run format"
+    ]
   }
 }
