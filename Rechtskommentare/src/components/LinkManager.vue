@@ -12,7 +12,10 @@
           }
         "
       >
-        <FontAwesomeIcon :icon="faTrash" />
+        <FontAwesomeIcon
+          :icon="faTrash"
+          class="text-primary-500 hover:text-primary-700 hover:dark:text-primary-300"
+        />
       </button>
     </div>
   </div>
@@ -64,7 +67,7 @@ function change() {
     })
   }
 
-  const copy = value.value.filter((l) => l.text != '')
+  const copy = value.value.filter((l) => l.text != '' || l.to != '')
   emit('update:modelValue', copy)
 }
 
