@@ -9,6 +9,8 @@
       :to="link"
       >{{ link.name }}</RouterLink
     >
+
+    <ThemeSwitch class="absolute top-1 right-5 h-full" />
   </header>
 </template>
 
@@ -16,6 +18,7 @@
 import { router } from '@/router'
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import ThemeSwitch from './ThemeSwitch.vue'
 
 const linkNames = ['Home', 'Table', 'New', 'Dev']
 const routes = linkNames.map((name) => router.getRoutes().find((route) => route.name === name)!)
