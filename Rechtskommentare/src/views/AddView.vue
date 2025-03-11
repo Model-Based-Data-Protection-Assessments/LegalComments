@@ -46,7 +46,13 @@
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import LinkManager from '@/components/LinkManager.vue'
 import type { Link } from '@/model'
-import { store } from '@/stores'
+import {
+  buildCommentToText,
+  gitHubUrl,
+  repositoryOwner,
+  repositoryName,
+  label
+} from '@/model/Parsing'
 import { ref } from 'vue'
 
 const name = ref('')
@@ -59,23 +65,27 @@ function addComment() {
   if (name.value == '') {
     return
   }
-  store().comments.push({
-    id:
-      store()
-        .comments.map((c) => c.id)
-        .reduce((a, b) => Math.max(a, b), 0) + 1,
-    name: name.value,
-    description: description.value,
-    legalNorm: legalNorm.value.filter((l) => l.text != ''),
-    references: references.value.filter((r) => r.text != ''),
-    constraint: constraint.value
-  })
 
+  openGitHub()
+  /*
   name.value = ''
   description.value = ''
   legalNorm.value = []
   references.value = []
-  constraint.value = ''
+  constraint.value = ''*/
+}
+
+function openGitHub() {
+  const comment = {
+    id: -1,
+    name: name.value,
+    description: description.value,
+    legalNorm: legalNorm.value,
+    references: references.value.filter((r) => r.to != '' || r.text != ''),
+    constraint: constraint.value
+  }
+  const url = `${gitHubUrl}/${repositoryOwner}/${repositoryName}/issues/new?labels=${label}&title=${name.value}&body=${buildCommentToText(comment)}`
+  window.open(encodeURI(url).replace(/#/g, '%23'), '_blank')?.focus()
 }
 </script>
 
