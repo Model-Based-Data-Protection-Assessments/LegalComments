@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "build-only": "vite build --base /Rechtskommentare/",
+    "build-only": "vite build --base /LegalComments/",
     "type-check": "vue-tsc --build",
     "lint": "eslint --max-warnings 0",
     "format": "prettier --write src/",

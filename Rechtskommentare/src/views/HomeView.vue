@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full flex-col items-center justify-center gap-4 align-middle">
-    <h1 class="text-3xl font-bold">Rechtskommentare</h1>
-    <p>Beschreibung</p>
+    <h1 class="text-3xl font-bold">Legal Comments</h1>
+    <p>Description text</p>
     <RouterLink to="/table/">
       <ButtonLikeComponent>Navigate to Table</ButtonLikeComponent>
     </RouterLink>
