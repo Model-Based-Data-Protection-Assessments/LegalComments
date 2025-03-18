@@ -63,7 +63,7 @@
 <script setup lang="ts">
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import LinkManager from '@/components/LinkManager.vue'
-import type { Link } from '@/model'
+import type { Comment, Link } from '@/model'
 import {
   buildCommentToText,
   gitHubUrl,
@@ -76,6 +76,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { onMounted, ref } from 'vue'
 import autocomplete, { type AutocompleteItem } from 'autocompleter'
+import { getLargestIssueNumber } from '@/model/Fetching'
 
 const legalTerm = ref('')
 const description = ref('')
@@ -85,17 +86,25 @@ const basedOn = ref<Link[]>([])
 const references = ref<Link[]>([])
 const constraint = ref('')
 
-function addComment() {
+async function addComment() {
   if (legalTerm.value == '') {
     return
   }
 
-  openGitHub()
+  const comment = await buildComment()
+  store().comments.push(comment)
+  openGitHub(comment)
 }
 
-function openGitHub() {
+function openGitHub(comment: Comment) {
+  const url = `${gitHubUrl}/${repositoryOwner}/${repositoryName}/issues/new?labels=${label}&title=${legalTerm.value}&body=${buildCommentToText(comment)}`
+  window.open(encodeURI(url).replace(/#/g, '%23'), '_blank')?.focus()
+}
+
+async function buildComment() {
+  const maxIssueId = await getLargestIssueNumber()
   const comment = {
-    id: -1,
+    id: maxIssueId + 1,
     legalTerm: legalTerm.value,
     usedIn: usedIn.value.filter((l) => l.text !== '' || l.to !== ''),
     description: description.value,
@@ -104,8 +113,7 @@ function openGitHub() {
     references: references.value.filter((l) => l.text !== '' || l.to !== ''),
     constraint: constraint.value
   }
-  const url = `${gitHubUrl}/${repositoryOwner}/${repositoryName}/issues/new?labels=${label}&title=${legalTerm.value}&body=${buildCommentToText(comment)}`
-  window.open(encodeURI(url).replace(/#/g, '%23'), '_blank')?.focus()
+  return comment
 }
 
 onMounted(() => {

@@ -48,3 +48,30 @@ export class IssueFetcher extends Fetcher {
     return issues
   }
 }
+
+export async function getLargestIssueNumber() {
+  const url = `https://api.github.com/repos/${repositoryOwner}/${repositoryName}/issues?state=all&per_page=1&sort=number&direction=desc`
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/vnd.github.v3+json'
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`)
+    }
+
+    const issues = await response.json()
+    if (issues.length === 0) {
+      console.warn('No issues found.')
+      return 0
+    }
+
+    return issues[0].number
+  } catch (error) {
+    console.error('Error fetching issues:', error)
+    return null
+  }
+}
