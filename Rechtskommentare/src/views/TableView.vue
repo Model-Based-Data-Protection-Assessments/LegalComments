@@ -20,6 +20,7 @@
 import ButtonLikeComponent from '@/components/ButtonLikeComponent.vue'
 import CommentTable from '@/components/CommentTable.vue'
 import SearchBar from '@/components/SearchBar.vue'
+import type { Link } from '@/model'
 import { store } from '@/stores'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -34,28 +35,34 @@ const comments = computed(() => {
     if (searchMatches(comment.id.toString())) {
       return true
     }
-    if (searchMatches(comment.name.toLowerCase())) {
+    if (searchMatches(comment.legalTerm.toLowerCase())) {
       return true
     }
 
-    for (const norm of comment.legalNorm) {
-      if (searchMatches(norm.text.toLowerCase())) {
-        return true
-      }
-      if (searchMatches(norm.to.toLowerCase())) {
-        return true
-      }
+    if (matchesLink(comment.usedIn)) {
+      return true
     }
-    for (const reference of comment.references) {
-      if (searchMatches(reference.text.toLowerCase())) {
-        return true
-      }
-      if (searchMatches(reference.to.toLowerCase())) {
-        return true
-      }
+    if (matchesLink(comment.basedOn)) {
+      return true
     }
+    if (matchesLink(comment.references)) {
+      return true
+    }
+
+    return false
   })
 })
+
+function matchesLink(links: Link[]) {
+  for (const link of links) {
+    if (searchMatches(link.text.toLowerCase())) {
+      return true
+    }
+    if (searchMatches(link.to.toLowerCase())) {
+      return true
+    }
+  }
+}
 
 function searchMatches(value: string) {
   return searchParts.value.some((part) => value.includes(part))
