@@ -12,7 +12,10 @@
       "
     >
       <label for="name">Name:</label>
-      <input id="name" v-model="name" type="text" name="name" placeholder="Name" />
+      <input id="name" v-model="legalTerm" type="text" name="name" placeholder="Name" />
+
+      <label>Used in:</label>
+      <LinkManager v-model="usedIn" />
 
       <label for="description">Description:</label>
       <textarea
@@ -23,8 +26,23 @@
         placeholder="Description"
       ></textarea>
 
-      <label>Legal Norms:</label>
-      <LinkManager v-model="legalNorm" />
+      <label>Related Comments:</label>
+      <div class="w-fit">
+        <input id="relatedInput" type="text" placeholder="Related Comment" />
+        <div>
+          <div v-for="r of relatedComments" :key="r" class="flex w-full gap-x-2">
+            <span class="flex-1"
+              >#{{ r }} - {{ store().comments.find((c) => c.id == r)?.legalTerm }}</span
+            >
+            <button @click="relatedComments.splice(relatedComments.indexOf(r), 1)">
+              <FontAwesomeIcon :icon="faTrash" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <label>Based on:</label>
+      <LinkManager v-model="basedOn" />
 
       <label>References:</label>
       <LinkManager v-model="references" />
@@ -37,7 +55,7 @@
         placeholder="Constraint"
       ></textarea>
 
-      <ButtonComponent :disabled="name == ''"> Add New Comment </ButtonComponent>
+      <ButtonComponent :disabled="legalTerm == ''"> Add New Comment </ButtonComponent>
     </form>
   </div>
 </template>
@@ -53,39 +71,82 @@ import {
   repositoryName,
   label
 } from '@/model/Parsing'
-import { ref } from 'vue'
+import { store } from '@/stores'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { onMounted, ref } from 'vue'
+import autocomplete, { type AutocompleteItem } from 'autocompleter'
 
-const name = ref('')
+const legalTerm = ref('')
 const description = ref('')
-const legalNorm = ref<Link[]>([])
+const relatedComments = ref<number[]>([])
+const usedIn = ref<Link[]>([])
+const basedOn = ref<Link[]>([])
 const references = ref<Link[]>([])
 const constraint = ref('')
 
 function addComment() {
-  if (name.value == '') {
+  if (legalTerm.value == '') {
     return
   }
 
   openGitHub()
-  /*
-  name.value = ''
-  description.value = ''
-  legalNorm.value = []
-  references.value = []
-  constraint.value = ''*/
 }
 
 function openGitHub() {
   const comment = {
     id: -1,
-    name: name.value,
+    legalTerm: legalTerm.value,
+    usedIn: usedIn.value.filter((l) => l.text !== '' || l.to !== ''),
     description: description.value,
-    legalNorm: legalNorm.value,
-    references: references.value.filter((r) => r.to != '' || r.text != ''),
+    relatedComments: relatedComments.value,
+    basedOn: basedOn.value.filter((l) => l.text !== '' || l.to !== ''),
+    references: references.value.filter((l) => l.text !== '' || l.to !== ''),
     constraint: constraint.value
   }
-  const url = `${gitHubUrl}/${repositoryOwner}/${repositoryName}/issues/new?labels=${label}&title=${name.value}&body=${buildCommentToText(comment)}`
+  const url = `${gitHubUrl}/${repositoryOwner}/${repositoryName}/issues/new?labels=${label}&title=${legalTerm.value}&body=${buildCommentToText(comment)}`
   window.open(encodeURI(url).replace(/#/g, '%23'), '_blank')?.focus()
+}
+
+onMounted(() => {
+  const input = document.getElementById('relatedInput') as HTMLInputElement | null
+  if (!input) {
+    return
+  }
+  autocomplete({
+    input: input,
+    fetch: function (text, update) {
+      const lowText = text.toLowerCase()
+      let num: string | undefined = undefined
+      if (text.startsWith('#')) {
+        num = text.substring(1)
+      }
+      const suggestions = store()
+        .comments.filter(
+          (c) =>
+            c.legalTerm.toLowerCase().includes(lowText) || (num && c.id.toString().includes(num))
+        )
+        .map((c) => ({ label: `#${c.id} - ${c.legalTerm}`, value: c.id }))
+      update(suggestions)
+    },
+    onSelect: function (item) {
+      relatedComments.value.push((item as CommentAutoCompleteItem).value)
+      input.value = ''
+    },
+    className:
+      'bg-primary-100 dark:bg-primary-700 border:bg-primary-500 border border-t-0 rounded-b',
+    render: function (item) {
+      const itemElement = document.createElement('div')
+      itemElement.textContent = item.label!
+      itemElement.classList.add('autocomplete-item', 'px-2', 'cursor-pointer')
+      return itemElement
+    }
+  })
+})
+
+interface CommentAutoCompleteItem extends AutocompleteItem {
+  value: number
+  label: string
 }
 </script>
 

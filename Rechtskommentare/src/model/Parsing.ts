@@ -90,6 +90,27 @@ class PlainTextParser extends ElementParser<string> {
   }
 }
 
+class RelatedCommentListParser extends ElementParser<number[]> {
+  constructor(id: string) {
+    super(id, 'Related Comments')
+  }
+
+  protected parseContent(text: string): number[] {
+    const regexp = /#([0-9]+)/gm
+    let match: RegExpExecArray | null = regexp.exec(text)
+    const relatedComments: number[] = []
+    while (match !== null) {
+      relatedComments.push(parseInt(match[1]))
+      match = regexp.exec(text)
+    }
+    return relatedComments
+  }
+
+  protected buildContent(v: number[]): string {
+    return v.map((c) => `#${c}`).join(', ')
+  }
+}
+
 class MainHeadingParser extends ElementParser<string> {
   constructor(id: string) {
     super(id)
@@ -105,30 +126,40 @@ class MainHeadingParser extends ElementParser<string> {
   }
 }
 
-const nameParser = new MainHeadingParser('name')
+const legalTermParser = new MainHeadingParser('name')
+const usedInParser = new LinkParser('usedIn', 'Used In')
 const descriptionParser = new PlainTextParser('description')
-const legalNormParser = new LinkParser('legalNorm', 'Legal Norms')
+const relatedCommentsParser = new RelatedCommentListParser('relatedComments')
+const basedOnParser = new LinkParser('basedOn', 'Based On')
 const referencesParser = new LinkParser('references', 'References')
 const constraintParser = new PlainTextParser('constraint', 'Constraint')
 
-function parseCommentFromText(text: string, id: number) {
+function parseCommentFromText(text: string, id: number): Comment {
   return {
     id,
-    name: nameParser.parse(text),
+    legalTerm: legalTermParser.parse(text),
+    usedIn: usedInParser.parse(text),
     description: descriptionParser.parse(text),
-    legalNorm: legalNormParser.parse(text),
+    relatedComments: relatedCommentsParser.parse(text),
+    basedOn: basedOnParser.parse(text),
     references: referencesParser.parse(text),
     constraint: constraintParser.parse(text)
   }
 }
 
 function buildCommentToText(comment: Comment) {
-  let text = nameParser.build(comment.name)
+  let text = legalTermParser.build(comment.legalTerm)
+  if (comment.usedIn.length > 0) {
+    text += '\n' + usedInParser.build(comment.usedIn)
+  }
   if (comment.description !== '') {
     text += '\n' + descriptionParser.build(comment.description)
   }
-  if (comment.legalNorm.length > 0) {
-    text += '\n' + legalNormParser.build(comment.legalNorm)
+  if (comment.relatedComments.length > 0) {
+    text += '\n' + relatedCommentsParser.build(comment.relatedComments)
+  }
+  if (comment.basedOn.length > 0) {
+    text += '\n' + basedOnParser.build(comment.basedOn)
   }
   if (comment.references.length > 0) {
     text += '\n' + referencesParser.build(comment.references)

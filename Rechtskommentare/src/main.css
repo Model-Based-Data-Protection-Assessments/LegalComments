@@ -18,3 +18,11 @@
   --color-primary-975: hsl(200, 20%, 13%);
   --color-primary-1000: #000;
 }
+
+.selected.autocomplete-item {
+  @apply bg-primary-200 dark:bg-primary-800;
+}
+
+.autocomplete-item:hover {
+  @apply bg-primary-200 dark:bg-primary-800;
+}

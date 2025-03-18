@@ -6,7 +6,7 @@
         <div
           v-for="col in columnOrder"
           :key="col"
-          class="table-cell max-h-fit cursor-pointer border-b border-gray-400 text-center"
+          class="table-cell max-h-fit border-b border-gray-400 text-center"
         >
           {{ columnNames[col] }}
         </div>
@@ -50,21 +50,32 @@ defineProps({
   }
 })
 
-const columnOrder = ['id', 'name', 'legalNorm', 'references'] as CommentKeys[]
+const columnOrder: CommentKeys[] = [
+  'id',
+  'legalTerm',
+  'usedIn',
+  'relatedComments',
+  'basedOn',
+  'references'
+]
 const columnNames: Partial<Record<CommentKeys, string>> = {
   id: 'ID',
-  name: 'Name',
-  legalNorm: 'Legal Norm',
+  legalTerm: 'Name',
+  usedIn: 'Used in',
+  relatedComments: 'Related Comments',
+  basedOn: 'Based on',
   references: 'References'
 }
 
 function getDisplayValue(comment: Comment, key: CommentKeys): string {
   if (key == 'id') {
     return comment.id.toString()
-  } else if (key == 'name') {
-    return comment.name
-  } else if (key == 'legalNorm' || key == 'references') {
+  } else if (key == 'legalTerm') {
+    return comment.legalTerm
+  } else if (key == 'usedIn' || key == 'basedOn' || key == 'references') {
     return comment[key].map((l) => l.text).join(', ')
+  } else if (key == 'relatedComments') {
+    return comment[key].map((r) => `#${r}`).join(', ')
   }
   return comment[key].toString()
 }
