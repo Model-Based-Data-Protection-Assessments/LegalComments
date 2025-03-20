@@ -23,6 +23,7 @@ jobs:
         working-directory: Rechtskommentare
         run: |
           npm install
+          npm run fetch
           npm run build
 
       - name: Deploy 🚀

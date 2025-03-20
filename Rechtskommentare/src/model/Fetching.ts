@@ -2,7 +2,7 @@ import type { Comment } from '.'
 import { apiUrl, label, parseCommentFromText, repositoryName, repositoryOwner } from './Parsing'
 
 interface Issue {
-  id: number
+  number: number
   body: string
 }
 
@@ -27,7 +27,7 @@ export class IssueFetcher extends Fetcher {
 
   public async fetch(): Promise<Comment[]> {
     const issues = await this.getAllIssues()
-    return issues.map((issue: Issue) => parseCommentFromText(issue.body, issue.id))
+    return issues.map((issue: Issue) => parseCommentFromText(issue.body, issue.number))
   }
 
   private async getAllIssues(): Promise<Issue[]> {

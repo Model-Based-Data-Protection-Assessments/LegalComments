@@ -12,7 +12,9 @@
     "lint": "eslint --max-warnings 0",
     "format": "prettier --write src/",
     "prepare": "cd .. && husky Rechtskommentare/.husky",
-    "fetch": "npx node-ts script/fetch.ts"
+    "fetch": "run-s fetch:build fetch:fetch",
+    "fetch:fetch": "node script/index.js",
+    "fetch:build": "npx vite build --config vite.script.config.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",

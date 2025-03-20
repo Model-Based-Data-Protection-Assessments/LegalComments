@@ -21,10 +21,25 @@ import { RouterView } from 'vue-router'
 import NavBar from './components/NavBar.vue'
 import ContainerComponent from './components/ContainerComponent.vue'
 import { provide, ref } from 'vue'
+import type { Comment } from './model'
+import { store } from './stores'
 
 const dark = ref(false)
 provide('dark', dark)
 /*if (matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) {
   dark.value = true
 }*/
+
+fetch('/data.json')
+  .then((response) => response.json())
+  .then((data) => {
+    const comments = data as Comment[]
+    comments.forEach((comment) => {
+      store().comments.push(comment)
+    })
+    store().comments.sort((a, b) => a.id - b.id)
+  })
+  .catch((error) => {
+    console.error('Error:', error)
+  })
 </script>

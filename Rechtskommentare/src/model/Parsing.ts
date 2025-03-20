@@ -18,13 +18,15 @@ abstract class ElementParser<T> {
   protected abstract parseContent(text: string): T
 
   private getSection(text: string): string {
-    const startRegexp = new RegExp(`${this.buildStartIndicator()}(.)`, 'gm')
-    const endRegexp = new RegExp(`(.)${this.buildEndIndicator()}`, 'gm')
-    const startMatch = startRegexp.exec(text)
-    const startText = startMatch ? startMatch[1] : ''
-    const endMatch = endRegexp.exec(startText)
-    const endText = endMatch ? endMatch[1] : ''
-    return endText
+    const regExp = new RegExp(
+      `${this.buildStartIndicator()}\n((?:.|\n)*)\n${this.buildEndIndicator()}`,
+      'gm'
+    )
+    const match = regExp.exec(text)
+    if (!match) {
+      return ''
+    }
+    return match[1]
   }
 
   public build(v: T): string {
@@ -117,7 +119,7 @@ class MainHeadingParser extends ElementParser<string> {
   }
 
   protected parseContent(text: string): string {
-    const r = /# (.)/.exec(text)
+    const r = /# (.*)/.exec(text)
     return r ? r[1].trim() : ''
   }
 
