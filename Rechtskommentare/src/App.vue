@@ -32,7 +32,7 @@ provide('dark', dark)
 }*/
 
 fetch(`/${repositoryName}/data.json`)
-  .then((response) => {console.log(response);return response.json()})
+  .then((response) => response.json())
   .then((data) => {
     const comments = data as Comment[]
     comments.forEach((comment) => {
