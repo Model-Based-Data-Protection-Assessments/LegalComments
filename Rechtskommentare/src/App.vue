@@ -23,6 +23,7 @@ import ContainerComponent from './components/ContainerComponent.vue'
 import { provide, ref } from 'vue'
 import type { Comment } from './model'
 import { store } from './stores'
+import { repositoryName } from './model/Parsing'
 
 const dark = ref(false)
 provide('dark', dark)
@@ -30,8 +31,8 @@ provide('dark', dark)
   dark.value = true
 }*/
 
-fetch('/data.json')
-  .then((response) => response.json())
+fetch(`/${repositoryName}/data.json`)
+  .then((response) => {console.log(response);return response.json()})
   .then((data) => {
     const comments = data as Comment[]
     comments.forEach((comment) => {
