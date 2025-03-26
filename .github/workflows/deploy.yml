@@ -20,7 +20,7 @@ jobs:
           node-version: "20"
 
       - name: Install, Fetch and Build 🔧
-        working-directory: Rechtskommentare
+        working-directory: LegalComments
         run: |
           npm install
           npm run fetch
@@ -30,4 +30,4 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.6.1
         with:
           branch: gh-pages
-          folder: Rechtskommentare/dist
+          folder: LegalComments/dist

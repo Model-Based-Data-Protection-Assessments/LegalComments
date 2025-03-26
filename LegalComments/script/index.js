@@ -1,4 +1,4 @@
-import { main } from './rechtskommentare.js'
+import { main } from './legalcomments.js'
 import { writeFile } from 'fs'
 
 async function run() {
