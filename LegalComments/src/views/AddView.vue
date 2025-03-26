@@ -7,7 +7,7 @@
       @submit="
         (e: Event) => {
           e.preventDefault()
-          addComment()
+          //addComment()
         }
       "
     >
@@ -55,7 +55,7 @@
         placeholder="Constraint"
       ></textarea>
 
-      <ButtonComponent :disabled="legalTerm == ''"> Add New Comment </ButtonComponent>
+      <ButtonComponent disabled> Add New Comment </ButtonComponent>
     </form>
   </div>
 </template>
